@@ -1,3 +1,24 @@
+import 'package:flutter/foundation.dart';
+
+class Cast {
+
+  List<Actor> actores = List();
+
+  Cast.fromJsonList( List<dynamic> jsonList ) {
+
+    if( jsonList == null ) return;
+
+    jsonList.forEach((item) { 
+
+      final actor = Actor.fromJsonMap(item);
+
+      actores.add(actor);
+
+    });
+
+  }
+
+}
 
 class Actor {
   int castId;
@@ -22,14 +43,23 @@ class Actor {
 
   Actor.fromJsonMap( Map<String, dynamic> json ) {
 
-    castId = json['castId'];
+    castId = json['cast_id'];
     character = json['character'];
-    creditId = json['creditId'];
+    creditId = json['credit_id'];
     gender = json['gender'];
     id = json['id'];
     name = json['name'];
     order = json['order'];
-    profilePath = json['profilePath'];
+    profilePath = json['profile_path'];
+
+  }
+
+  getFoto() {
+
+    if( profilePath == null )
+      return '';
+    else
+      return 'https://image.tmdb.org/t/p/w500/$profilePath';
 
   }
 

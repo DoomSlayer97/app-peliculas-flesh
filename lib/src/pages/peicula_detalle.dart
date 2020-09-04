@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:peliculas/src/models/actores_modelo.dart';
 import 'package:peliculas/src/models/pelicula_modelo.dart';
+import 'package:peliculas/src/providers/peliculas_provider.dart';
 
 class PeliculaDetalle extends StatelessWidget {
   
@@ -20,6 +22,7 @@ class PeliculaDetalle extends StatelessWidget {
               SizedBox( height: 10.0 ),
               _posterTitulo(context, pelicula),
               _descripcion(context, pelicula),
+              _crearCasting( pelicula )
             ]),
           )
           
@@ -60,11 +63,14 @@ class PeliculaDetalle extends StatelessWidget {
       padding: EdgeInsets.symmetric(horizontal: 20.0),
       child: Row(
         children: <Widget>[
-          ClipRRect(
-            borderRadius: BorderRadius.circular(20.0),
-            child: Image(
-              image: NetworkImage (pelicula.getPosterImg()),
-              height: 150.0,
+          Hero(
+            tag: pelicula.uniqueId,
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(20.0),
+              child: Image(
+                image: NetworkImage (pelicula.getPosterImg()),
+                height: 150.0,
+              ),
             ),
           ),
           SizedBox(width: 20.0),
@@ -98,7 +104,7 @@ class PeliculaDetalle extends StatelessWidget {
 
   }
 
-  _descripcion(BuildContext context, Pelicula pelicula) {
+  _descripcion( BuildContext context, Pelicula pelicula ) {
 
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
@@ -109,4 +115,69 @@ class PeliculaDetalle extends StatelessWidget {
     );
 
   }
+
+  Widget _crearCasting( Pelicula pelicula ) {
+
+    final peliProvider = PeliculasProvider();
+
+    return FutureBuilder(
+      future: peliProvider.getCast(pelicula.id.toString()),
+      builder: (BuildContext context, AsyncSnapshot<List> snapshot) {
+
+        if(snapshot.hasData){
+          return _crearActoresPageView( snapshot.data );
+        } else {
+          return Center(child: CircularProgressIndicator());
+        }
+
+      }
+    );
+
+  }
+
+  Widget _crearActoresPageView( List<Actor> actores ) {
+
+    return SizedBox(
+      height: 200,
+      child: PageView.builder(
+        controller: PageController(
+          viewportFraction: 0.3,
+          initialPage: 1
+        ),
+        itemCount: actores.length,
+        itemBuilder: (context, i) {
+
+          return _actorTarjeta( context, actores[i]);
+
+        },
+      ),
+    );
+
+  }
+
+  Widget _actorTarjeta( BuildContext context, Actor actor ) {
+
+    return Container(
+      margin: EdgeInsets.only(right:15.0),
+      child: Column(
+        children: <Widget>[
+          ClipRRect(
+            borderRadius: BorderRadius.circular(20.0),
+            child: FadeInImage(
+              image: NetworkImage( actor.getFoto() ),
+              placeholder: AssetImage('assets/img/404.jpg.png'),
+            ),
+          ),
+          SizedBox(height: 2.0),
+          Text(
+            actor.name,
+            overflow: TextOverflow.ellipsis,
+            style: Theme.of(context).textTheme.caption
+          )
+        ],
+      ),
+    );
+
+  }
+
 }
