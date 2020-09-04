@@ -9,7 +9,7 @@ class PeliculasProvider {
 
   String _apiKey    = '5b5f0fb6035bfba42ba625bc45be2acd';
   String _url       = 'api.themoviedb.org';
-  String _language  = 'es-Es';
+  String _language  = 'es-ES';
 
   int _popularesPage = 0;
   bool _cargando = false;
