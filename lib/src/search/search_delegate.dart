@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:peliculas/src/models/pelicula_modelo.dart';
+import 'package:peliculas/src/providers/peliculas_provider.dart';
 
 class DataSearch extends SearchDelegate{
 
-  String seleccionado;
+  String seleccionado = "";
+  final peliculasProvider = PeliculasProvider();
 
   final peliculas = [
     'Spiderman',
@@ -68,14 +71,53 @@ class DataSearch extends SearchDelegate{
   @override
   Widget buildSuggestions( BuildContext context ) {
 
-    final listaSugerida = ( query.isEmpty )
+    if( query.isEmpty ) {
+
+      return Container();
+
+    }
+
+    return FutureBuilder(
+      future: peliculasProvider.buscarPelicula(query),
+      builder: (BuildContext context, AsyncSnapshot<List<Pelicula>> snapshot) {
+        
+        if( snapshot.hasData ) {
+
+          final peliculas = snapshot.data;
+
+          return ListView(
+            children: peliculas.map((pelicula) {
+              
+              return ListTile(
+                leading: FadeInImage(
+                  image: NetworkImage( pelicula.getPosterImg() ),
+                  placeholder: AssetImage('assets/img/loading.gif'),
+                  width: 50.0,
+                  fit: BoxFit.contain
+                ),
+                title: Text(pelicula.title),
+                subtitle: Text(pelicula.originalTitle),
+              );
+
+            }).toList()
+          );
+
+        } else {
+          return Center(
+            child: CircularProgressIndicator()
+          );
+        }
+      },
+    );
+
+    /* final listaSugerida = ( query.isEmpty )
                           ? peliculasRecientes
                           : peliculas.where(
                             (p) => p.toLowerCase().startsWith(query) 
                           ).toList();
 
     return ListView.builder(
-      itemCount: peliculasRecientes.length,
+      itemCount: listaSugerida.length,
       itemBuilder: ( context, i ) {
 
         return ListTile(
@@ -91,7 +133,7 @@ class DataSearch extends SearchDelegate{
         );
 
       },
-    );
+    ); */
 
   }
 
