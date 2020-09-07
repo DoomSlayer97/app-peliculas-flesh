@@ -7,6 +7,7 @@ import 'package:peliculas/src/widgets/movie_horizontal.dart';
 class HomePage extends StatelessWidget {
 
   final peliculasProvider = PeliculasProvider();
+  
 
   @override
   Widget build(BuildContext context) {

@@ -3,8 +3,6 @@ import 'package:flutter/foundation.dart';
 class Cast {
 
   List<Actor> actores = List();
-  
-  
 
   Cast.fromJsonList( List<dynamic> jsonList ) {
 

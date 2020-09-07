@@ -88,15 +88,27 @@ class DataSearch extends SearchDelegate{
           return ListView(
             children: peliculas.map((pelicula) {
               
+              pelicula.uniqueId = '${pelicula.id}-busqueda';
+
               return ListTile(
-                leading: FadeInImage(
-                  image: NetworkImage( pelicula.getPosterImg() ),
-                  placeholder: AssetImage('assets/img/loading.gif'),
-                  width: 50.0,
-                  fit: BoxFit.contain
+                leading: Hero(
+                  tag: pelicula.uniqueId,
+                  child: FadeInImage(
+                    image: NetworkImage( pelicula.getPosterImg() ),
+                    placeholder: AssetImage('assets/img/loading.gif'),
+                    width: 50.0,
+                    fit: BoxFit.contain
+                  ),
                 ),
                 title: Text(pelicula.title),
                 subtitle: Text(pelicula.originalTitle),
+                onTap: () {
+
+                  close(context, null);
+
+                  Navigator.pushNamed(context, 'detalle', arguments: pelicula);
+
+                },
               );
 
             }).toList()
